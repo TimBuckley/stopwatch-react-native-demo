@@ -1,3 +1,4 @@
+const formatTime = require('minutes-seconds-milliseconds')
 const React = require('react-native')
 const {
   Text,
@@ -24,9 +25,9 @@ const StopWatch = React.createClass({
   },
   header: function() {
     return(
-      <View style={[style.header, this.border('yellow')]}>
+      <View style={[style.header]}>
         {this.timerDisplay()}
-        <View style={[style.buttonWrapper, this.border('green')]}>
+        <View style={[style.buttonWrapper]}>
           {this.startStopButton()}
           {this.lapButton()}
         </View>
@@ -35,9 +36,9 @@ const StopWatch = React.createClass({
   },
   timerDisplay: function() {
     return(
-      <View style={[style.timerWrapper, this.border('red')]}>
+      <View style={[style.timerWrapper]}>
         <Text style={style.timer}>
-          {this.state.timeElapsed}
+          {formatTime(this.state.timeElapsed)}
         </Text>
       </View>
     )
@@ -47,7 +48,7 @@ const StopWatch = React.createClass({
       <TouchableHighlight
         underlayColor="gray"
         onPress={this.handleStartPress}
-      >
+        style={[style.button, style.startButton]}>
         <Text>
           Start
         </Text>
@@ -56,17 +57,17 @@ const StopWatch = React.createClass({
   },
   lapButton: function() {
     return(
-      <View style={style.button}>
+      <TouchableHighlight style={style.button}>
         <Text>
           Lap
         </Text>
-      </View>
+      </TouchableHighlight>
     )
   },
 
   footer: function() {
     return(
-      <View style={[style.footer, this.border('blue')]}>
+      <View style={[style.footer]}>
         <Text>I am a list of Laps</Text>
       </View>
     )
@@ -85,8 +86,7 @@ const StopWatch = React.createClass({
         timeElapsed: new Date() - startTime
       })
     }, 30)
-  },
-  border: (color) => ({borderColor: color, borderWidth: 4})
+  }
 })
 
 const style = StyleSheet.create({
@@ -114,8 +114,22 @@ const style = StyleSheet.create({
     alignItems: 'center'
   },
 
-  timer: {},
-  button: {},
+  timer: {
+    fontSize: 60,
+    fontFamily: 'HelveticaNeue-Light',
+    fontWeight: '100'
+  },
+  button: {
+    borderWidth: 2,
+    height: 100,
+    width: 100,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  startButton: {
+    borderColor: 'green'
+  }
 
 })
 
