@@ -12,12 +12,15 @@ const {
 const StopWatch = React.createClass({
   getInitialState() {
       return {
-        timeElapsed: null
-      };
+        timeElapsed: null,
+        startTime: null,
+        running: false,
+        laps: []
+      }
   },
   render: function() {
     return (
-      <View style={style.container}>
+      <View style={styles.container}>
         {this.header()}
         {this.footer()}
       </View>
@@ -25,9 +28,9 @@ const StopWatch = React.createClass({
   },
   header: function() {
     return(
-      <View style={[style.header]}>
+      <View style={[styles.header]}>
         {this.timerDisplay()}
-        <View style={[style.buttonWrapper]}>
+        <View style={[styles.buttonWrapper]}>
           {this.startStopButton()}
           {this.lapButton()}
         </View>
@@ -36,28 +39,31 @@ const StopWatch = React.createClass({
   },
   timerDisplay: function() {
     return(
-      <View style={[style.timerWrapper]}>
-        <Text style={style.timer}>
+      <View style={[styles.timerWrapper]}>
+        <Text style={styles.timer}>
           {formatTime(this.state.timeElapsed)}
         </Text>
       </View>
     )
   },
   startStopButton: function() {
+    let style = this.state.running ? styles.stopButton : styles.startButton
     return(
       <TouchableHighlight
         underlayColor="gray"
         onPress={this.handleStartPress}
-        style={[style.button, style.startButton]}>
+        style={[styles.button, style]}>
         <Text>
-          Start
+          {this.state.running ? 'Stop' : 'Start'}
         </Text>
       </TouchableHighlight>
     )
   },
   lapButton: function() {
     return(
-      <TouchableHighlight style={style.button}>
+      <TouchableHighlight
+        onPress={this.handleLapPress}
+        style={styles.button}>
         <Text>
           Lap
         </Text>
@@ -67,42 +73,60 @@ const StopWatch = React.createClass({
 
   footer: function() {
     return(
-      <View style={[style.footer]}>
-        <Text>I am a list of Laps</Text>
+      <View style={[styles.footer]}>
+        {this.laps()}
       </View>
     )
   },
-  lapList: function() {
-    return(
-      <View>
-      </View>
-    )
+  laps: function() {
+    return this.state.laps.map((time, index) => (
+      <View
+        key={index}
+        style={styles.lap}>
+        <Text style={styles.lapText}>
+          Lap #{index + 1}
+        </Text>
+        <Text style={styles.lapText}>
+           {formatTime(time)}
+        </Text>
+      </View>))
   },
   handleStartPress: function() {
-    let startTime = new Date()
+    if (this.state.running) {
+      clearInterval(this.interval)
+      this.setState({running: false})
+      return
+    }
 
-    setInterval(() => {
+    this.setState({startTime: new Date()})
+
+    this.interval = setInterval(() => {
       this.setState({
-        timeElapsed: new Date() - startTime
+        timeElapsed: new Date() - this.state.startTime,
+        running: true
       })
     }, 30)
+  },
+  handleLapPress: function() {
+    let lap = this.state.timeElapsed
+    this.setState({
+      startTime: new Date(),
+      laps: this.state.laps.concat([lap])
+    })
   }
 })
 
-const style = StyleSheet.create({
+
+const styles = StyleSheet.create({
   container: {
-    flex: 1, // Fill the entire screen
+    flex: 1,
     alignItems: 'stretch'
   },
 
-  header: { // Yellow
-    flex: 1
-  },
-  footer: { // Blue
-    flex: 1
-  },
+  header: {flex: 1},
+  footer: {flex: 1},
 
-  timerWrapper: { // Red
+  timerWrapper: {
     flex: 5,
     justifyContent: 'center',
     alignItems: 'center'
@@ -127,8 +151,20 @@ const style = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
+
   startButton: {
     borderColor: 'green'
+  },
+  stopButton: {
+    borderColor: 'red'
+  },
+
+  lap: {
+    justifyContent: 'space-around',
+    flexDirection: 'row'
+  },
+  lapText: {
+    fontSize: 30
   }
 
 })
