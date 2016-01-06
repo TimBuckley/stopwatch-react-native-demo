@@ -10,7 +10,7 @@ const {
 
 
 const StopWatch = React.createClass({
-  getInitialState() {
+  getInitialState: function() {
       return {
         timeElapsed: null,
         startTime: null,
@@ -26,6 +26,7 @@ const StopWatch = React.createClass({
       </View>
     )
   },
+
   header: function() {
     return(
       <View style={[styles.header]}>
@@ -91,6 +92,7 @@ const StopWatch = React.createClass({
         </Text>
       </View>))
   },
+
   handleStartPress: function() {
     if (this.state.running) {
       clearInterval(this.interval)
