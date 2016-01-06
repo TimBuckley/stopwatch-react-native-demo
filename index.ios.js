@@ -1,5 +1,5 @@
-var React = require('react-native')
-var {
+const React = require('react-native')
+const {
   Text,
   View,
   TouchableHighlight,
@@ -8,7 +8,12 @@ var {
 } = React
 
 
-var StopWatch = React.createClass({
+const StopWatch = React.createClass({
+  getInitialState() {
+      return {
+        timeElapsed: null
+      };
+  },
   render: function() {
     return (
       <View style={style.container}>
@@ -32,7 +37,7 @@ var StopWatch = React.createClass({
     return(
       <View style={[style.timerWrapper, this.border('red')]}>
         <Text style={style.timer}>
-          00:00.00
+          {this.state.timeElapsed}
         </Text>
       </View>
     )
@@ -69,17 +74,22 @@ var StopWatch = React.createClass({
   lapList: function() {
     return(
       <View>
-
       </View>
     )
   },
   handleStartPress: function() {
-    console.log('Start was pressed')
+    let startTime = new Date()
+
+    setInterval(() => {
+      this.setState({
+        timeElapsed: new Date() - startTime
+      })
+    }, 30)
   },
   border: (color) => ({borderColor: color, borderWidth: 4})
 })
 
-var style = StyleSheet.create({
+const style = StyleSheet.create({
   container: {
     flex: 1, // Fill the entire screen
     alignItems: 'stretch'
